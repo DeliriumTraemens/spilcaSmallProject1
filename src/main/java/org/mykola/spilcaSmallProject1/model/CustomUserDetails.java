@@ -14,16 +14,19 @@ public class CustomUserDetails implements UserDetails {
     public CustomUserDetails(User user) {
         this.user = user;
     }
+
     private final User getUser() {
         return user;
     }
 
     // ========================== UserDetails implement methods ==========================
-
+    //SimpleGrantedAuthority, which is a straightforward
+    //implementation of the GrantedAuthority interface. Spring Security
+    //provides this implementation.
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return user.getAuthorities().stream()
-                .map(a-> new SimpleGrantedAuthority(a.getName()))
+                .map(a -> new SimpleGrantedAuthority(a.getName()))
                 .collect(Collectors.toList());
     }
 
