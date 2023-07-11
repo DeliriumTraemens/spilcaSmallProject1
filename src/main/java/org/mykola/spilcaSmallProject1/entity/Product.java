@@ -3,7 +3,6 @@ package org.mykola.spilcaSmallProject1.entity;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.Currency;
 
 @Entity
 @Data
