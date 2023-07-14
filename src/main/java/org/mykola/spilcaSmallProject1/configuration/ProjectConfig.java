@@ -22,11 +22,13 @@ public class ProjectConfig extends WebSecurityConfigurerAdapter {
 //      Define Users by UserDetails User
         var user1 = User.withUsername("john")
                 .password("12345")
-                .authorities("READ")
+                .authorities("read","write")//roles are case sensitive
+                .roles("admin")//in method role() use the role name WITHOUT prefix 'ROLE_'
                 .build();
         var user2 = User.withUsername("jane")
                 .password("12345")
-                .authorities("WRITE")
+                .roles("manager")
+                .authorities("read", "write", "delete")
                 .build();
 //      defined Users loaded into manager -- wired to Context
         manager.createUser(user1);
@@ -42,14 +44,27 @@ public class ProjectConfig extends WebSecurityConfigurerAdapter {
     }
 
     // После зарядки бинов пишем конфиги с подробностями
+//    @Override
+//    protected void configure(HttpSecurity http) throws Exception {
+//        http.httpBasic();
+//        http.authorizeRequests()
+//                .anyRequest()
+////                .hasAnyAuthority("WRITE", "READ");
+//                .hasAuthority("WRITE");
+////                .permitAll();
+////                .denyAll();
+//    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.httpBasic();
+
+        String expression = "hasAuthority('read') and !hasAuthority('delete')";
+
         http.authorizeRequests()
-                .anyRequest()
-                .hasAnyAuthority("WRITE", "READ");
-//                .hasAuthority("WRITE");
-//                .permitAll();
-//                .denyAll();
+                .mvcMatchers("/hola").hasRole("manager")
+                .mvcMatchers("/hello").hasRole("admin")
+                .anyRequest().permitAll();
+//                .access(expression);
     }
 }
